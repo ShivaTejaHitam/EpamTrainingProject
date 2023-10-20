@@ -2,7 +2,6 @@ package com.askme.questionsservice.services;
 
 import java.sql.Timestamp;
 
-
 import java.time.Instant;
 import java.util.List;
 
@@ -36,15 +35,17 @@ public class QuestionsService {
 
 	public List<QuestionDto> findAll() {
 		List<QuestionDto> questions = Mapper.toDtoList(questionsRepository.findAll());
-		ResponseEntity<List<AnswerDto>> answers = answersExchangeClient.getAnswers();
+		setAssociatedAnswers(questions);
+		return questions;
+	}
 
+	private void setAssociatedAnswers(List<QuestionDto> questions) {
+		ResponseEntity<List<AnswerDto>> answers = answersExchangeClient.getAnswers();
 		for (QuestionDto question : questions) {
 			List<AnswerDto> currentAnswers = answers.getBody().stream()
 					.filter(a -> a.getQuestionId() == question.getQuestionId()).toList();
 			question.setAnswers(currentAnswers);
 		}
-
-		return questions;
 	}
 
 	public QuestionDto findById(int questionId) {
@@ -56,7 +57,17 @@ public class QuestionsService {
 	public String delete(int questionId) {
 		findById(questionId);
 		questionsRepository.deleteById(questionId);
+		deleteAssociatedAnswers(questionId);
 		return "Question Deleted Successfully";
+	}
+
+	private void deleteAssociatedAnswers(int questionId) {
+		ResponseEntity<List<AnswerDto>> answers = answersExchangeClient.getAnswers();
+		for (AnswerDto answer : answers.getBody()) {
+			if (questionId == answer.getQuestionId()) {
+				answersExchangeClient.deleteAnswer(answer.getAnswerId().intValue());
+			}
+		}
 	}
 
 	public QuestionDto update(QuestionDto questionDto, int questionId) {
