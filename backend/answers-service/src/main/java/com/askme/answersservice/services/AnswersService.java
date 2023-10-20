@@ -2,7 +2,6 @@ package com.askme.answersservice.services;
 
 import java.sql.Timestamp;
 
-
 import java.time.Instant;
 import java.util.List;
 
@@ -42,19 +41,28 @@ public class AnswersService {
 	public List<AnswerDto> findAll() {
 
 		List<AnswerDto> answers = Mapper.toDtoList(answersRepository.findAll());
+		setAssociatedComments(answers);
+		setAssociatedLikes(answers);
+		return answers;
+	}
+
+	private void setAssociatedComments(List<AnswerDto> answers) {
 		ResponseEntity<List<CommentDto>> comments = commentExchangeClient.getComments();
-		ResponseEntity<List<LikeDto>> likes = likeExchangeClient.getLikes();
 
 		for (AnswerDto answer : answers) {
 			List<CommentDto> currentComments = comments.getBody().stream()
 					.filter(c -> c.getAnswerId() == answer.getAnswerId()).toList();
+			answer.setComments(currentComments);
+		}
+	}
+
+	private void setAssociatedLikes(List<AnswerDto> answers) {
+		ResponseEntity<List<LikeDto>> likes = likeExchangeClient.getLikes();
+		for (AnswerDto answer : answers) {
 			List<LikeDto> currentLikes = likes.getBody().stream().filter(l -> l.getAnswerId() == answer.getAnswerId())
 					.toList();
-			answer.setComments(currentComments);
 			answer.setLikes(currentLikes);
 		}
-
-		return answers;
 	}
 
 	public AnswerDto findById(int answerId) {
@@ -62,8 +70,8 @@ public class AnswersService {
 		return Mapper.toDto(answerOptional
 				.orElseThrow(() -> new AnswerNotFoundException("Answer with answerId : " + answerId + " Not Found.")));
 	}
-	
-	public AnswerDto update(AnswerDto answerDto,int answerId) {
+
+	public AnswerDto update(AnswerDto answerDto, int answerId) {
 		findById(answerId);
 		return Mapper.toDto(answersRepository.save(Mapper.toEntity(answerDto)));
 	}
@@ -71,7 +79,27 @@ public class AnswersService {
 	public String delete(int answerId) {
 		findById(answerId);
 		answersRepository.deleteById(answerId);
+		deleteAssociatedComments(answerId);
+		deleteAssociatedLikes(answerId);
 		return "Answer Deleted Successfully";
+	}
+
+	private void deleteAssociatedComments(int answerId) {
+		ResponseEntity<List<CommentDto>> comments = commentExchangeClient.getComments();
+		for (CommentDto comment : comments.getBody()) {
+			if (answerId == comment.getAnswerId()) {
+				commentExchangeClient.deleteComment(comment.getCommentId().intValue());
+			}
+		}
+	}
+
+	private void deleteAssociatedLikes(int answerId) {
+		ResponseEntity<List<LikeDto>> likes = likeExchangeClient.getLikes();
+		for (LikeDto like : likes.getBody()) {
+			if (answerId == like.getAnswerId()) {
+				likeExchangeClient.dislikeAnswer(like.getLikeId().intValue());
+			}
+		}
 	}
 
 }
