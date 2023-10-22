@@ -31,14 +31,14 @@ public class CommentsControllerTest {
     }
 
     @Test
-    public void testCommentsList() {
+    public void testGetAllComments() {
         // Prepare test data
         List<CommentDto> comments = new ArrayList<>();
         comments.add(new CommentDto());
-        when(commentsService.findAll()).thenReturn(comments);
+        when(commentsService.getAllComments()).thenReturn(comments);
 
         // Test the controller method
-        ResponseEntity<List<CommentDto>> response = commentsController.commentsList();
+        ResponseEntity<List<CommentDto>> response = commentsController.getAllComments();
 
         // Assertions
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -46,13 +46,13 @@ public class CommentsControllerTest {
     }
 
     @Test
-    public void testCreateComment() {
+    public void testPostComment() {
         // Prepare test data
         CommentDto commentDto = new CommentDto();
-        when(commentsService.save(commentDto)).thenReturn(commentDto);
+        when(commentsService.postComment(commentDto)).thenReturn(commentDto);
 
         // Test the controller method
-        ResponseEntity<CommentDto> response = commentsController.createComment(commentDto);
+        ResponseEntity<CommentDto> response = commentsController.postComment(commentDto);
 
         // Assertions
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -60,14 +60,14 @@ public class CommentsControllerTest {
     }
 
     @Test
-    public void testViewComment() {
+    public void testGetCommentById() {
         // Prepare test data
         int commentId = 1;
         CommentDto commentDto = new CommentDto();
-        when(commentsService.findById(commentId)).thenReturn(commentDto);
+        when(commentsService.getCommentById(commentId)).thenReturn(commentDto);
 
         // Test the controller method
-        ResponseEntity<CommentDto> response = commentsController.viewComment(commentId);
+        ResponseEntity<CommentDto> response = commentsController.getCommentById(commentId);
 
         // Assertions
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -79,7 +79,7 @@ public class CommentsControllerTest {
         // Prepare test data
         int commentId = 1;
         CommentDto commentDto = new CommentDto();
-        when(commentsService.update(commentDto, commentId)).thenReturn(commentDto);
+        when(commentsService.updateComment(commentDto, commentId)).thenReturn(commentDto);
 
         // Test the controller method
         ResponseEntity<CommentDto> response = commentsController.updateComment(commentId, commentDto);
@@ -93,7 +93,7 @@ public class CommentsControllerTest {
     public void testDeleteComment() {
         // Prepare test data
         int commentId = 1;
-        when(commentsService.delete(commentId)).thenReturn("Deleted");
+        when(commentsService.deleteComment(commentId)).thenReturn("Deleted");
 
         // Test the controller method
         ResponseEntity<String> response = commentsController.deleteComment(commentId);

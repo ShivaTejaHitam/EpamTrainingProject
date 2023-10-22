@@ -39,48 +39,48 @@ public class CommentsServiceTest {
     }
 
     @Test
-    public void testSaveComment() {
+    public void testPostComment() {
         CommentDto commentDto = new CommentDto();
         Comment comment = new Comment();
         comment.setTimestamp(Timestamp.from(Instant.now()));
 
         when(commentsRepository.save(any(Comment.class))).thenReturn(comment);
 
-        CommentDto savedComment = commentsService.save(commentDto);
+        CommentDto savedComment = commentsService.postComment(commentDto);
 
         assertNotNull(savedComment);
         assertEquals(comment.getTimestamp(), savedComment.getTimestamp());
     }
 
     @Test
-    public void testFindAllComments() {
+    public void testGetAllComments() {
         List<Comment> comments = Arrays.asList(new Comment(), new Comment());
         when(commentsRepository.findAll()).thenReturn(comments);
 
-        List<CommentDto> commentDtos = commentsService.findAll();
+        List<CommentDto> commentDtos = commentsService.getAllComments();
 
         assertNotNull(commentDtos);
         assertEquals(comments.size(), commentDtos.size());
     }
 
     @Test
-    public void testFindCommentById() {
+    public void testGetCommentById() {
         int commentId = 1;
         Comment comment = new Comment();
         when(commentsRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
-        CommentDto foundComment = commentsService.findById(commentId);
+        CommentDto foundComment = commentsService.getCommentById(commentId);
 
         assertNotNull(foundComment);
     }
 
     @Test
-    public void testFindCommentById_NotFound() {
+    public void testGetCommentById_NotFound() {
         int commentId = 1;
         when(commentsRepository.findById(commentId)).thenReturn(Optional.empty());
 
         assertThrows(CommentNotFoundException.class, () -> {
-            commentsService.findById(commentId);
+            commentsService.getCommentById(commentId);
         });
     }
 
@@ -90,7 +90,7 @@ public class CommentsServiceTest {
         Comment comment = new Comment();
         when(commentsRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
-        String result = commentsService.delete(commentId);
+        String result = commentsService.deleteComment(commentId);
 
         assertEquals("Comment Deleted Successfully", result);
     }
@@ -103,7 +103,7 @@ public class CommentsServiceTest {
         when(commentsRepository.findById(commentId)).thenReturn(Optional.empty());
 
         assertThrows(CommentNotFoundException.class, () -> {
-            commentsService.update(commentDto, commentId);
+            commentsService.updateComment(commentDto, commentId);
         });
     }
 }

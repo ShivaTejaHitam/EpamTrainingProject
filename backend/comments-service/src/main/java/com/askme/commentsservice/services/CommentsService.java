@@ -25,28 +25,30 @@ public class CommentsService {
 	@Autowired
 	private CommentsRepository commentsRepository;
 	
-	public CommentDto save(CommentDto commentDto) {
+	public CommentDto postComment(CommentDto commentDto) {
 		commentDto.setTimestamp(Timestamp.from(Instant.now()));
 		return Mapper.toDto(commentsRepository.save(Mapper.toEntity(commentDto)));
 	}
 	
-	public List<CommentDto> findAll() {
+	public List<CommentDto> getAllComments() {
 		return Mapper.toDtoList(commentsRepository.findAll());
 	}
 
-	public CommentDto findById(int commentId) {
+	public CommentDto getCommentById(int commentId) {
 		Optional<Comment> commentOptional = commentsRepository.findById(commentId);
 		return Mapper.toDto(commentOptional.orElseThrow(() -> new CommentNotFoundException("Comment with Comment Id : " + commentId + " Not Found")));
 	}
 
-	public String delete(int commentId) {
-		findById(commentId);
+	public String deleteComment(int commentId) {
+		getCommentById(commentId);
 		commentsRepository.deleteById(commentId);
 		return "Comment Deleted Successfully";
 	}
 	
-	public CommentDto update(CommentDto commentDto,int commentId) {
-		findById(commentId);
-		return Mapper.toDto(commentsRepository.save(Mapper.toEntity(commentDto)));
+	public CommentDto updateComment(CommentDto commentDto,int commentId) {
+		Comment comment = Mapper.toEntity(getCommentById(commentId)) ;
+		comment.setCommentContent(commentDto.getCommentContent());
+		comment.setTimestamp(Timestamp.from(Instant.now()));
+		return Mapper.toDto(commentsRepository.save(comment));
 	}
 }
