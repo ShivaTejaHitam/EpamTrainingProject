@@ -45,20 +45,20 @@ public class AnswersControllerTest {
 	
 
 	@Test
-	public void testAnswersList() throws Exception {
+	public void testGetAllAnswers() throws Exception {
 		List<AnswerDto> answerList = new ArrayList<>();
 		answerList.add(answerDto);
 
-		when(answersService.findAll()).thenReturn(answerList);
+		when(answersService.getAllAnswers()).thenReturn(answerList);
 
 		mockMvc.perform(get("/answers").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].answerId").value(1L)).andExpect(jsonPath("$[0].answerContent").value("Sample Answer"));
 	}
 
 	@Test
-	public void testCreateAnswer() throws Exception {
+	public void testPostAnswer() throws Exception {
 
-		when(answersService.save(any(AnswerDto.class))).thenReturn(answerDto);
+		when(answersService.postAnswer(any(AnswerDto.class))).thenReturn(answerDto);
 
 		mockMvc.perform(
 				post("/answers").contentType(MediaType.APPLICATION_JSON).content("{\"answerContent\":\"Sample Answer\"}"))
@@ -67,9 +67,9 @@ public class AnswersControllerTest {
 	}
 
 	@Test
-	public void testViewAnswer() throws Exception {
+	public void testGetAnswerById() throws Exception {
 
-		when(answersService.findById(1)).thenReturn(answerDto);
+		when(answersService.getAnswerById(1)).thenReturn(answerDto);
 
 		mockMvc.perform(get("/answers/1").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("answerId").value(1L)).andExpect(jsonPath("answerContent").value("Sample Answer"));
@@ -81,17 +81,17 @@ public class AnswersControllerTest {
 		updatedAnswerDto.setAnswerId(1L);
 		updatedAnswerDto.setAnswerContent("Updated Answer");
 
-		when(answersService.update(any(AnswerDto.class), eq(1))).thenReturn(updatedAnswerDto);
+		when(answersService.updateAnswer(any(AnswerDto.class), eq(1))).thenReturn(updatedAnswerDto);
 
 		mockMvc.perform(
-				put("/answers/1").contentType(MediaType.APPLICATION_JSON).content("{\"answerContent\":\"Updated Answer\"}"))
+				patch("/answers/1").contentType(MediaType.APPLICATION_JSON).content("{\"answerContent\":\"Updated Answer\"}"))
 				.andExpect(status().isOk()).andExpect(jsonPath("answerId").value(1L))
 				.andExpect(jsonPath("answerContent").value("Updated Answer"));
 	}
 
 	@Test
 	public void testDeleteAnswer() throws Exception {
-		when(answersService.delete(1)).thenReturn("Answer deleted successfully");
+		when(answersService.deleteAnswer(1)).thenReturn("Answer deleted successfully");
 
 		mockMvc.perform(delete("/answers/1").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 	}

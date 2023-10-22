@@ -53,17 +53,17 @@ public class AnswersServiceTest {
 	}
 
 	@Test
-	public void testSaveAnswer() {
+	public void testPostAnswer() {
 
 		Mockito.when(answersRepository.save(any(Answer.class))).thenReturn(Mapper.toEntity(answerDto));
 
-		AnswerDto savedAnswer = answersService.save(answerDto);
+		AnswerDto savedAnswer = answersService.postAnswer(answerDto);
 
 		assertEquals(answerDto.getAnswerContent(), savedAnswer.getAnswerContent());
 	}
 
 	@Test
-	public void testFindAllAnswers() {
+	public void testGetAllAnswers() {
 
 		List<Answer> answers = new ArrayList<>();
 		answers.add(Mapper.toEntity(answerDto));
@@ -75,21 +75,21 @@ public class AnswersServiceTest {
 		Mockito.when(commentExchangeClient.getComments()).thenReturn(ResponseEntity.ok(comments));
 		Mockito.when(likeExchangeClient.getLikes()).thenReturn(ResponseEntity.ok(likes));
 
-		List<AnswerDto> result = answersService.findAll();
+		List<AnswerDto> result = answersService.getAllAnswers();
 
 		assertEquals(1, result.size());
 		assertEquals(answerDto.getAnswerContent(), result.get(0).getAnswerContent());
 	}
 
 	@Test
-	public void testFindAnswerById() {
+	public void testGetAnswerById() {
 
 		Optional<Answer> answerOptional = Optional.of(Mapper.toEntity(answerDto));
 		int answerId = 1;
 
 		Mockito.when(answersRepository.findById(eq(answerId))).thenReturn(answerOptional);
 
-		AnswerDto result = answersService.findById(answerId);
+		AnswerDto result = answersService.getAnswerById(answerId);
 
 		assertEquals(answerDto.getAnswerContent(), result.getAnswerContent());
 	}
@@ -104,7 +104,7 @@ public class AnswersServiceTest {
 		Mockito.when(answersRepository.findById(eq(1))).thenReturn(answerOptional);
 		Mockito.when(answersRepository.save(any(Answer.class))).thenReturn(Mapper.toEntity(updatedAnswerDto));
 
-		AnswerDto updatedAnswer = answersService.update(updatedAnswerDto, 1);
+		AnswerDto updatedAnswer = answersService.updateAnswer(updatedAnswerDto, 1);
 
 		assertEquals(updatedAnswerDto.getAnswerContent(), updatedAnswer.getAnswerContent());
 	}
@@ -114,10 +114,14 @@ public class AnswersServiceTest {
 		int answerId = 1;
 
 		Optional<Answer> answerOptional = Optional.of(Mapper.toEntity(answerDto));
+		List<CommentDto> comments = new ArrayList<>();
+		List<LikeDto> likes = new ArrayList<>();
 
 		Mockito.when(answersRepository.findById(eq(answerId))).thenReturn(answerOptional);
+		Mockito.when(commentExchangeClient.getComments()).thenReturn(ResponseEntity.ok(comments));
+		Mockito.when(likeExchangeClient.getLikes()).thenReturn(ResponseEntity.ok(likes));
 
-		String result = answersService.delete(answerId);
+		String result = answersService.deleteAnswer(answerId);
 
 		assertEquals("Answer Deleted Successfully", result);
 		Mockito.verify(answersRepository, Mockito.times(1)).deleteById(eq(answerId));

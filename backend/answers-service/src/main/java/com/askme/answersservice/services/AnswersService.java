@@ -33,12 +33,12 @@ public class AnswersService {
 	@Autowired
 	private LikeExchangeClient likeExchangeClient;
 
-	public AnswerDto save(AnswerDto answerDto) {
+	public AnswerDto postAnswer(AnswerDto answerDto) {
 		answerDto.setTimestamp(Timestamp.from(Instant.now()));
 		return Mapper.toDto(answersRepository.save(Mapper.toEntity(answerDto)));
 	}
 
-	public List<AnswerDto> findAll() {
+	public List<AnswerDto> getAllAnswers() {
 
 		List<AnswerDto> answers = Mapper.toDtoList(answersRepository.findAll());
 		setAssociatedComments(answers);
@@ -48,7 +48,6 @@ public class AnswersService {
 
 	private void setAssociatedComments(List<AnswerDto> answers) {
 		ResponseEntity<List<CommentDto>> comments = commentExchangeClient.getComments();
-
 		for (AnswerDto answer : answers) {
 			List<CommentDto> currentComments = comments.getBody().stream()
 					.filter(c -> c.getAnswerId() == answer.getAnswerId()).toList();
@@ -65,19 +64,21 @@ public class AnswersService {
 		}
 	}
 
-	public AnswerDto findById(int answerId) {
+	public AnswerDto getAnswerById(int answerId) {
 		Optional<Answer> answerOptional = answersRepository.findById(answerId);
 		return Mapper.toDto(answerOptional
 				.orElseThrow(() -> new AnswerNotFoundException("Answer with answerId : " + answerId + " Not Found.")));
 	}
 
-	public AnswerDto update(AnswerDto answerDto, int answerId) {
-		findById(answerId);
-		return Mapper.toDto(answersRepository.save(Mapper.toEntity(answerDto)));
+	public AnswerDto updateAnswer(AnswerDto answerDto, int answerId) {
+		Answer answer = Mapper.toEntity(getAnswerById(answerId));
+		answer.setAnswerContent(answerDto.getAnswerContent());
+		answer.setTimestamp(Timestamp.from(Instant.now()));
+		return Mapper.toDto(answersRepository.save(answer));
 	}
 
-	public String delete(int answerId) {
-		findById(answerId);
+	public String deleteAnswer(int answerId) {
+		getAnswerById(answerId);
 		answersRepository.deleteById(answerId);
 		deleteAssociatedComments(answerId);
 		deleteAssociatedLikes(answerId);
