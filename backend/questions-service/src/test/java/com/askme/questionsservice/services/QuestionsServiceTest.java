@@ -48,20 +48,20 @@ public class QuestionsServiceTest {
 	}
 
 	@Test
-	public void testSaveQuestion() {
+	public void testPostQuestion() {
 		
 
 		Question questionEntity = Mapper.toEntity(questionDto);
 
 		when(questionsRepository.save(any(Question.class))).thenReturn(questionEntity);
 
-		QuestionDto savedQuestion = questionsService.save(questionDto);
+		QuestionDto savedQuestion = questionsService.postQuestion(questionDto);
 
 		assertEquals(questionDto.getQuestionContent(), savedQuestion.getQuestionContent());
 	}
 
 	@Test
-	public void testFindAllQuestions() {
+	public void testGetAllQuestions() {
 		
 		List<Question> questionEntities = new ArrayList<>();
 		questionEntities.add(Mapper.toEntity(questionDto));
@@ -78,20 +78,20 @@ public class QuestionsServiceTest {
 		ResponseEntity<List<AnswerDto>> answerResponse = new ResponseEntity<>(answerList, HttpStatus.OK);
 		when(answersExchangeClient.getAnswers()).thenReturn(answerResponse);
 
-		List<QuestionDto> questions = questionsService.findAll();
+		List<QuestionDto> questions = questionsService.getAllQuestions();
 
 		assertEquals(1, questions.size());
 		assertEquals(1, questions.get(0).getAnswers().size());
 	}
 
 	@Test
-	public void testFindByIdQuestion() {
+	public void testGetQuestionById() {
 		
 		Question questionEntity = Mapper.toEntity(questionDto);
 
 		when(questionsRepository.findById(1)).thenReturn(Optional.of(questionEntity));
 
-		QuestionDto foundQuestion = questionsService.findById(1);
+		QuestionDto foundQuestion = questionsService.getQuestionById(1);
 
 		assertEquals(questionDto.getQuestionContent(), foundQuestion.getQuestionContent());
 	}
@@ -99,9 +99,20 @@ public class QuestionsServiceTest {
 	
 	@Test
 	public void testDeleteQuestion() {
+		
+		AnswerDto answerDto = new AnswerDto();
+		answerDto.setAnswerId(1L);
+		answerDto.setQuestionId(1L);
+		answerDto.setAnswerContent("Test answer");
+		List<AnswerDto> answerList = new ArrayList<>();
+		answerList.add(answerDto);
+		ResponseEntity<List<AnswerDto>> answerResponse = new ResponseEntity<>(answerList, HttpStatus.OK);
+		
 		when(questionsRepository.findById(1)).thenReturn(Optional.of(Mapper.toEntity(questionDto)));
+		when(answersExchangeClient.getAnswers()).thenReturn(answerResponse);
+		when(answersExchangeClient.deleteAnswer(1)).thenReturn(new ResponseEntity<>("Answer Deleted Successfully", HttpStatus.NO_CONTENT));
 
-		String result = questionsService.delete(1);
+		String result = questionsService.deleteQuestion(1);
 
 		assertEquals("Question Deleted Successfully", result);
 	}
@@ -118,7 +129,7 @@ public class QuestionsServiceTest {
 		when(questionsRepository.findById(1)).thenReturn(Optional.of(Mapper.toEntity(questionDto)));
 		when(questionsRepository.save(any(Question.class))).thenReturn(questionEntity);
 
-		QuestionDto updatedQuestionRes = questionsService.update(questionDto, 1);
+		QuestionDto updatedQuestionRes = questionsService.updateQuestion(questionDto, 1);
 
 		assertEquals(updatedQuestion.getQuestionContent(), updatedQuestionRes.getQuestionContent());
 	}

@@ -2,6 +2,7 @@ package com.askme.questionsservice.controllers;
 
 import com.askme.questionsservice.dto.QuestionDto;
 
+
 import com.askme.questionsservice.services.QuestionsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,34 +32,34 @@ public class QuestionsControllerTest {
     }
 
     @Test
-    public void testCreateQuestion() {
+    public void testPostQuestion() {
         QuestionDto questionDto = new QuestionDto();
-        Mockito.when(questionsService.save(questionDto)).thenReturn(questionDto);
+        Mockito.when(questionsService.postQuestion(questionDto)).thenReturn(questionDto);
 
-        ResponseEntity<QuestionDto> response = questionsController.createQuestion(questionDto);
+        ResponseEntity<QuestionDto> response = questionsController.postQuestion(questionDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(questionDto, response.getBody());
     }
 
     @Test
-    public void testQuestionsList() {
+    public void testGetAllQuestions() {
         List<QuestionDto> questionDtoList = new ArrayList<>();
-        Mockito.when(questionsService.findAll()).thenReturn(questionDtoList);
+        Mockito.when(questionsService.getAllQuestions()).thenReturn(questionDtoList);
 
-        ResponseEntity<List<QuestionDto> > response = questionsController.questionsList();
+        ResponseEntity<List<QuestionDto> > response = questionsController.getAllQuestions();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(questionDtoList, response.getBody());
     }
 
     @Test
-    public void testViewQuestion() {
+    public void testGetQuestionById() {
         int questionId = 1;
         QuestionDto questionDto = new QuestionDto();
-        Mockito.when(questionsService.findById(questionId)).thenReturn(questionDto);
+        Mockito.when(questionsService.getQuestionById(questionId)).thenReturn(questionDto);
 
-        ResponseEntity<QuestionDto> response = questionsController.viewQuestion(questionId);
+        ResponseEntity<QuestionDto> response = questionsController.getQuestionById(questionId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(questionDto, response.getBody());
@@ -68,7 +69,8 @@ public class QuestionsControllerTest {
     public void testUpdateQuestion() {
         int questionId = 1;
         QuestionDto questionDto = new QuestionDto();
-        Mockito.when(questionsService.update(questionDto, questionId)).thenReturn(questionDto);
+        questionDto.setQuestionContent("Sample Question");
+        Mockito.when(questionsService.updateQuestion(questionDto, questionId)).thenReturn(questionDto);
 
         ResponseEntity<QuestionDto> response = questionsController.updateQuestion(questionId, questionDto);
 
@@ -79,7 +81,7 @@ public class QuestionsControllerTest {
     @Test
     public void testDeleteQuestion() {
         int questionId = 1;
-        Mockito.when(questionsService.delete(questionId)).thenReturn("Question deleted successfully");
+        Mockito.when(questionsService.deleteQuestion(questionId)).thenReturn("Question deleted successfully");
 
         ResponseEntity<String> response = questionsController.deleteQuestion(questionId);
 

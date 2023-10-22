@@ -28,12 +28,12 @@ public class QuestionsService {
 	@Autowired
 	private AnswerExchangeClient answersExchangeClient;
 
-	public QuestionDto save(QuestionDto questionDto) {
+	public QuestionDto postQuestion(QuestionDto questionDto) {
 		questionDto.setTimestamp(Timestamp.from(Instant.now()));
 		return Mapper.toDto(questionsRepository.save(Mapper.toEntity(questionDto)));
 	}
 
-	public List<QuestionDto> findAll() {
+	public List<QuestionDto> getAllQuestions() {
 		List<QuestionDto> questions = Mapper.toDtoList(questionsRepository.findAll());
 		setAssociatedAnswers(questions);
 		return questions;
@@ -48,14 +48,22 @@ public class QuestionsService {
 		}
 	}
 
-	public QuestionDto findById(int questionId) {
+	public QuestionDto getQuestionById(int questionId) {
 		Optional<Question> questionOptional = questionsRepository.findById(questionId);
 		return Mapper.toDto(questionOptional.orElseThrow(
 				() -> new QuestionNotFoundException("Question with questionId : " + questionId + " Not Found")));
 	}
+	
+	
+	public QuestionDto updateQuestion(QuestionDto questionDto, int questionId) {
+		Question question = Mapper.toEntity(getQuestionById(questionId));
+		question.setQuestionContent(questionDto.getQuestionContent());
+		question.setTimeStamp(Timestamp.from(Instant.now()));
+		return Mapper.toDto(questionsRepository.save(question));
+	}
 
-	public String delete(int questionId) {
-		findById(questionId);
+	public String deleteQuestion(int questionId) {
+		getQuestionById(questionId);
 		questionsRepository.deleteById(questionId);
 		deleteAssociatedAnswers(questionId);
 		return "Question Deleted Successfully";
@@ -70,8 +78,4 @@ public class QuestionsService {
 		}
 	}
 
-	public QuestionDto update(QuestionDto questionDto, int questionId) {
-		findById(questionId);
-		return Mapper.toDto(questionsRepository.save(Mapper.toEntity(questionDto)));
-	}
 }
