@@ -1,0 +1,41 @@
+.rightbar {
+    flex: 3;
+    height: calc(100vh - 50px);
+    overflow-y: scroll;
+    position: sticky;
+    top: 50px;
+    width: 100%;
+   
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(179, 179, 179);
+}
+
+
+
+.rightbarTitle {
+    margin-bottom: 20px;
+}
+
+.rightbarfriendList {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+}
+
+.rightbarTitle {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+
