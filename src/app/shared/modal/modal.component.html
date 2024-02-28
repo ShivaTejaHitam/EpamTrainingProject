@@ -1,0 +1,9 @@
+<div class="modal">
+    <div class="modal-content">
+      <button id="closeButton" (click)="closeModal()">X</button>
+      <span>{{errorMessage}}</span>
+      <h2>{{questionTitle}}</h2>
+      <textarea rows="20" cols="80" placeholder="Write your answer" [formControl]="answerContent"></textarea>
+      <button id='postButton' (click)="postAnswer()">Post Answer</button>
+    </div>
+</div>

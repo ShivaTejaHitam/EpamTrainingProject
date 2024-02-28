@@ -1,0 +1,21 @@
+<div class="feed">
+    <div class="feedWrapper">
+        <share></share>
+        <div *ngIf="posts.length <= 0">
+            No posts Yet
+         </div>
+        <div *ngFor="let post of posts">
+            <div *ngIf="post.answers.length>0">
+            <post 
+            [questionId] = "post.questionId"
+            questionContent = {{post.questionContent}}
+            [answerId] = "post.answers[0].answerId"
+            answerContent={{post.answers[0].answerContent}} 
+            timestamp = {{post.timestamp}}
+            userEmail = {{post.answers[0].userEmail}}
+            [comments] = "post.answers[0].comments"
+            ></post>
+            </div>
+        </div>
+    </div>
+</div>

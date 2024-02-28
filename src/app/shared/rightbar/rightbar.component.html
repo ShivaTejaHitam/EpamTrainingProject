@@ -1,0 +1,8 @@
+<div class="rightbar">             
+    <h4 class="rightbarTitle">Questions For you</h4>
+    <ul class="rightbarfriendList">
+        <div *ngFor="let question of questionsForYou">
+            <question-for-you questionContent={{question.questionContent}}></question-for-you>
+        </div>
+    </ul>
+</div>

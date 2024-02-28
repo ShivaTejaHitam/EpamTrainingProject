@@ -1,0 +1,11 @@
+.homeContainer {
+    display: flex;
+    width: 100%;
+}
+.feedContainer {
+    width:60%;
+}
+
+.leftbarContainer {
+    width: 20%;
+}

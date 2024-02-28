@@ -1,0 +1,17 @@
+<div class="question-detail-feed">
+    <div class="question-feedWrapper">
+        <question-title questionTitle={{questionTitle}} [questionId] = "questionId"></question-title>
+        <div *ngIf="answers.length <= 0">
+            Please Be the First One to Answer
+         </div>
+        <div *ngFor="let answer of answers">
+            <post
+            answerContent={{answer.answerContent}} 
+            [answerId] = "answer.answerId"
+            timestamp = {{answer.timestamp}}
+            userEmail = {{answer.userEmail}}
+            [comments] = "answer.comments"
+            ></post>
+        </div>
+    </div>
+</div>

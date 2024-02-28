@@ -1,0 +1,10 @@
+<div class='questionTitle'>
+    <div class="questionTitleWrapper">
+      <div class="questionTitleBottom">
+         <strong>{{questionTitle}}</strong>
+      </div>
+      <br>
+      <button class="answerButton" (click)="openModal()">Answer</button>
+      <app-modal *ngIf="showModal" (closeModalEvent)="closeModal()" questionTitle={{questionTitle}} [questionId] = "questionId"></app-modal>
+    </div>
+</div>

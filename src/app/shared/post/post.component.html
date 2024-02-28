@@ -1,0 +1,30 @@
+<div class='post'>
+    <div class="postWrapper">
+      <div class="postTop">
+          <div class="postTopLeft">
+              <img class='postProfileImg'
+               src="assets/persons/shiva.jpg" 
+              alt="" />
+              <span class="postUsername">
+                {{userEmail}}
+                </span>
+              <span class="postDate">{{timestamp}}</span>
+          </div>
+      </div>
+      <div class="postCenter">
+        <strong><a [routerLink]="questionDetailRoutePath" [queryParams]="questionDetails">{{questionContent}}</a></strong>
+        <br>
+        <span class="postText">{{answerContent}}</span>
+      </div>
+      <div class="postBottom">
+        <div class="postBottomLeft">
+          <img class='likeIcon' (click)="toggleLike()" src={{likeIconPath}}  alt="" />
+          <span class="postLikeCounter"> {{likes.length}} likes</span>
+        </div> 
+        <div class="postBottomRight">
+          <span class="postCommenttext" (click)="toggleCommentsVisibility()">{{commentsCount}} comments</span>
+        </div>
+      </div>
+      <comments *ngIf="commentsVisible" [answerId]="answerId" (commentPostedEvent)="incrementCommentCount()"></comments>
+  </div>
+</div>

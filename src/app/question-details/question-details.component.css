@@ -1,0 +1,11 @@
+.questionDetailsContainer {
+    display: flex;
+    width: 100%;
+}
+.questionDetailsFeedContainer {
+    width:60%;
+}
+
+.leftbarContainer {
+    width: 20%;
+}

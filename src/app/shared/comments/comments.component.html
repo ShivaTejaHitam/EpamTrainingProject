@@ -1,0 +1,18 @@
+<hr class='shareHr'/>
+<div class="comments">
+    <div class="comments-content">
+      <span>
+        <input placeholder="Write your comment" class="commentInput" [formControl]=commentContent/>
+        <button id='postButton' (click)="postComment()">Post Comment</button>
+      </span>
+      <hr class='shareHr'/>
+      <div *ngIf="comments.length <= 0">
+         No comments Yet
+      </div>
+      <div *ngFor="let comment of comments">
+        <strong>{{comment.userEmail}}</strong> <span>{{comment.timestamp}}</span>
+        <p>{{comment.commentContent}}</p>
+        <hr class='shareHr'/>
+      </div>
+    </div>
+</div>
