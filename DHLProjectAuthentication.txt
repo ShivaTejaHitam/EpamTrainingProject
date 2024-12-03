@@ -1,0 +1,10 @@
+internal user -> azureAd authentication
+external user -> usernamepassword authentication
+
+when external user logs in , the request is redirected to DHL pass, which calls TMS. TMS sends an application token. Every further request contains application token.
+when internal user logs in , the request is redirected to Azure AD, which issues a auth token which can be used to make further requests.
+
+
+log out : 
+-- front channel logout - when user is logged in to only one application. Then the request is sent to DHL Pass and it invalidates .
+-- back channgel logout - when user is logged in to multiple applications, then the request is sent to DHL pass and it logs out from all applications.
